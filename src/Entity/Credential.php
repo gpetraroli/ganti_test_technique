@@ -22,6 +22,9 @@ class Credential
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $iv = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class Credential
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getIv(): ?string
+    {
+        return $this->iv;
+    }
+
+    public function setIv(string $iv): static
+    {
+        $this->iv = $iv;
 
         return $this;
     }
