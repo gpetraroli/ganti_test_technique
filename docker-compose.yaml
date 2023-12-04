@@ -1,0 +1,26 @@
+version: '3.4'
+
+name: ganti
+
+services:
+  nginx:
+    image: ganti_nginx
+    container_name: ganti_nginx
+    build:
+      context: .
+      target: nginx
+    ports:
+      - 80:80
+    depends_on:
+      - php
+
+  php:
+    image: ganti_php
+    container_name: ganti_php
+    build:
+      context: .
+      target: php
+    volumes:
+      - ./:/var/www/app
+    environment:
+      - openssl_encrypt_passphrase=GantiFollowYourData
