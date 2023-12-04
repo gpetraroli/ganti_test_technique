@@ -55,4 +55,12 @@ class CredentialController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/', name: '_index')]
+    public function index()
+    {
+        return $this->render('credential/index.html.twig', [
+            'credentials' => $this->em->getRepository(Credential::class)->findAll(),
+        ]);
+    }
 }
