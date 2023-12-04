@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Credential;
+use App\Exception\OpenSSL\OpenSSLEncryptException;
 use App\Form\CredentialType;
 use App\Service\Encryptor\OpenSSLEncryptorManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +16,7 @@ class CredentialController extends AbstractController
 {
     public function __construct(
         private OpenSSLEncryptorManager $openSSLEncryptorManager,
-        private EntityManagerInterface $em,
+        private EntityManagerInterface  $em,
     )
     {
     }
@@ -30,10 +31,16 @@ class CredentialController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $encryptedResult = $this->openSSLEncryptorManager->encrypt(
-                $request->get('credential')['plainPassword']['first'],
-                getenv('openssl_encrypt_passphrase')
-            );
+
+            try {
+                $encryptedResult = $this->openSSLEncryptorManager->encrypt(
+                    $request->get('credential')['plainPassword']['first'],
+                    getenv('openssl_encrypt_passphrase')
+                );
+            } catch (OpenSSLEncryptException $e) {
+                $this->addFlash('danger', 'Something went wrong!');
+                return $this->redirectToRoute('app_credential_new');
+            }
 
             $credential->setPassword($encryptedResult['encryptedData']);
             $credential->setIv($encryptedResult['iv']);
