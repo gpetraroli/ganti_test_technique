@@ -12,7 +12,7 @@ class OpenSSLEncryptorManager
         $iv = openssl_random_pseudo_bytes(16);
 
         $encryptedData = openssl_encrypt($data, $algo, $passphrase, 0, $iv);
-        $encryptedData = false;
+
         if ($encryptedData === false) {
             throw new OpenSSLEncryptException();
         }
